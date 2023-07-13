@@ -1,63 +1,122 @@
 import Image from "next/image";
 import { useStyles } from "./styles";
+import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+import { useForm } from "react-hook-form";
+import { Checkbox, TextInput, PasswordInput } from "react-hook-form-mantine";
 
 import FormBg from "../../../public/formBg.png";
 import Logo from "../../../public/Plyrme.png";
-import { Anchor, Button, Checkbox, Grid, Input, Text } from "@mantine/core";
+import { Anchor, Button, Grid, Text } from "@mantine/core";
 
-const Form = () => {
+export default function FormPage() {
   const { classes } = useStyles();
+  const userSchema = Yup.object({
+    name: Yup.string().min(3).required(),
+    email: Yup.string().email().required(),
+    phone: Yup.string().min(8).required(),
+    pass: Yup.string().min(8).max(12).required(),
+    repeatPass: Yup.string()
+      .min(8)
+      .max(12)
+      .oneOf([Yup.ref("pass"), null], "Os campos de senha devem ser iguais")
+      .required("Os campos de senha devem ser iguais"),
+    clube: Yup.string().required(),
+    terms: Yup.boolean().required(),
+  });
+
+  const { formState, control, handleSubmit } = useForm({
+    mode: "onChange",
+    resolver: yupResolver(userSchema),
+  });
+  const { errors, isSubmitting } = formState;
+
+  const handleSend = async (values) => {
+    await new Promise((resolve) => {
+      setTimeout(resolve, 2000);
+    });
+    console.log(["Dados enviados: ", values]);
+  };
 
   return (
     <main className={classes.container}>
       <div className={classes.formDiv}>
-        <Image src={Logo} draggable={false} style={{ height: 34 }} />
+        <Image src={Logo} alt="logo" draggable={false} style={{ height: 34 }} />
 
         <Text size={24} weight="bold" color="#666666">
           Crie seu clube na plyr.me
         </Text>
 
-        <div className={classes.formwrap}>
-          <Input.Wrapper label="Nome" id="name">
-            <Input id="name" placeholder="Digite seu nome" />
-          </Input.Wrapper>
+        <form className={classes.formwrap} onSubmit={handleSubmit(handleSend)}>
+          <TextInput
+            control={control}
+            id="name"
+            label="Nome"
+            placeholder="Digite seu nome"
+            name="name"
+            error={!!errors.name}
+          />
 
           <Grid gutter={8}>
             <Grid.Col xs={8} span={12}>
-              <Input.Wrapper label="Email" id="email">
-                <Input id="email" placeholder="Digite seu email" />
-              </Input.Wrapper>
+              <TextInput
+                control={control}
+                id="email"
+                placeholder="Digite seu email"
+                label="Email"
+                name="email"
+                type="email"
+                error={!!errors.email}
+              />
             </Grid.Col>
 
             <Grid.Col xs="auto" span={12}>
-              <Input.Wrapper label="Celular/Whatsapp" id="tel">
-                <Input id="tel" placeholder="(00)00000-0000" />
-              </Input.Wrapper>
+              <TextInput
+                control={control}
+                id="tel"
+                placeholder="(00)00000-0000"
+                type="tel"
+                name="phone"
+                label="Celular/Whatsapp"
+                error={!!errors.phone}
+              />
             </Grid.Col>
           </Grid>
 
           <Grid gutter={8}>
             <Grid.Col xs={6} span={12}>
-              <Input.Wrapper label="Senha" id="password">
-                <Input id="password" placeholder="Digite sua senha" />
-              </Input.Wrapper>
+              <PasswordInput
+                control={control}
+                id="password"
+                placeholder="Digite sua senha"
+                name="pass"
+                label="Senha"
+                error={!!errors.pass}
+              />
             </Grid.Col>
 
             <Grid.Col xs={6} span={12}>
-              <Input.Wrapper label="Confirme sua senha" id="repeatPass">
-                <Input
-                  id="repeatPass"
-                  placeholder="Digite sua senha novamente"
-                />
-              </Input.Wrapper>
+              <PasswordInput
+                control={control}
+                id="repeatPass"
+                placeholder="Digite sua senha novamente"
+                name="repeatPass"
+                label="Confirme sua senha"
+              />
             </Grid.Col>
           </Grid>
 
           <Grid align="flex-end" gutter="xs">
             <Grid.Col span={10}>
-              <Input.Wrapper label="Nome do seu clube" id="clube">
-                <Input id="clube" placeholder="Digite o nome do seu clube" />
-              </Input.Wrapper>
+              <TextInput
+                control={control}
+                id="clube"
+                placeholder="Digite o nome do seu clube"
+                name="clube"
+                label="Nome do seu clube"
+                error={!!errors.clube}
+              />
             </Grid.Col>
 
             <Grid.Col span={2}>
@@ -70,6 +129,9 @@ const Form = () => {
             size="xs"
             styles={{ label: { paddingLeft: 6, marginTop: -4 } }}
             className={classes.checkbox}
+            name="terms"
+            control={control}
+            error={!!errors.terms}
             label={
               <Text size="sm" color="#5C5B5B">
                 Aceito os{" "}
@@ -91,6 +153,8 @@ const Form = () => {
             color="orange"
             style={{ width: "min-content", fontWeight: 600, margin: "4px 0" }}
             size="md"
+            type="submit"
+            loading={isSubmitting}
           >
             CRIAR CONTA
           </Button>
@@ -106,12 +170,15 @@ const Form = () => {
               Faça o login
             </Anchor>
           </Text>
-        </div>
+        </form>
       </div>
 
-      <Image src={FormBg} className={classes.imageBg} draggable={false} />
+      <Image
+        src={FormBg}
+        alt="content creator"
+        className={classes.imageBg}
+        draggable={false}
+      />
     </main>
   );
-};
-
-export default Form;
+}
