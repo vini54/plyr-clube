@@ -1,11 +1,14 @@
 import { Button, Overlay } from "@mantine/core";
 import { useStyles } from "./styles";
 import { Inter } from "next/font/google";
+import { useRouter } from "next/router";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const { classes } = useStyles();
+  const router = useRouter();
+
   return (
     <main className={classes.wrapBg + " " + inter.className}>
       <Overlay
@@ -24,7 +27,14 @@ export default function Home() {
           dedicado.
         </p>
 
-        <Button color="orange" radius="lg" size="lg">
+        <Button
+          color="orange"
+          radius="lg"
+          size="lg"
+          className={inter.className}
+          style={{ fontWeight: 500 }}
+          onClick={() => router.push("/cadastro")}
+        >
           Cadastre-se
         </Button>
       </div>
