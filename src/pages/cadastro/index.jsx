@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useStyles } from "./styles";
+import { useStyles } from "@/styles/cadastro";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 

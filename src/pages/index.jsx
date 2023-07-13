@@ -1,5 +1,5 @@
 import { Button, Overlay } from "@mantine/core";
-import { useStyles } from "./styles";
+import { useStyles } from "@/styles/home";
 import { Inter } from "next/font/google";
 import { useRouter } from "next/router";
 
