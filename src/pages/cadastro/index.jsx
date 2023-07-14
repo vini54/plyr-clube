@@ -8,7 +8,10 @@ import { Checkbox, TextInput, PasswordInput } from "react-hook-form-mantine";
 
 import FormBg from "../../../public/formBg.png";
 import Logo from "../../../public/Plyrme.png";
-import { Anchor, Button, Grid, Text } from "@mantine/core";
+import { Anchor, Button, Grid, LoadingOverlay, Text } from "@mantine/core";
+import Link from "next/link";
+import { useState } from "react";
+import { ConfirmModal } from "@/components/ConfirmModal";
 
 export default function FormPage() {
   const { classes } = useStyles();
@@ -31,16 +34,24 @@ export default function FormPage() {
     resolver: yupResolver(userSchema),
   });
   const { errors, isSubmitting } = formState;
+  const [isCompleted, setComplete] = useState(false);
 
   const handleSend = async (values) => {
     await new Promise((resolve) => {
       setTimeout(resolve, 2000);
     });
     console.log(["Dados enviados: ", values]);
+    setComplete(true);
   };
 
   return (
     <main className={classes.container}>
+      <ConfirmModal
+        closeBtn={false}
+        open={isCompleted}
+        onClose={() => setComplete(false)}
+      />
+
       <div className={classes.formDiv}>
         <Image src={Logo} alt="logo" draggable={false} style={{ height: 34 }} />
 
@@ -49,6 +60,13 @@ export default function FormPage() {
         </Text>
 
         <form className={classes.formwrap} onSubmit={handleSubmit(handleSend)}>
+          <LoadingOverlay
+            visible={isSubmitting}
+            overlayBlur={1}
+            overlayOpacity={0.4}
+            loaderProps={{ size: "md", color: "orange", variant: "dots" }}
+            radius="lg"
+          />
           <TextInput
             control={control}
             id="name"
@@ -161,14 +179,9 @@ export default function FormPage() {
 
           <Text size="sm">
             Já tem um clube?{" "}
-            <Anchor
-              href="http://www.google.com"
-              target="_blank"
-              underline={false}
-              color="orange"
-            >
+            <Link style={{ color: "#fd7e14" }} href="/">
               Faça o login
-            </Anchor>
+            </Link>
           </Text>
         </form>
       </div>

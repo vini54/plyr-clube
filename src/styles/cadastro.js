@@ -59,6 +59,7 @@ export const useStyles = createStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     gap: rem(16),
+    position: "relative",
 
     [theme.fn.smallerThan(575)]: {
       gap: rem(4),
